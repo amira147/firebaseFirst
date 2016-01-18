@@ -1,0 +1,107 @@
+{
+	"users":{
+		"user_1":{
+			"provider": "normal",
+			"first_name": "John",
+			"last_name": "Smith",
+			"email": "john@mail.com",
+			"meta":{
+				"last_sync":"",
+				"create_date":""
+			},
+			"image":"",
+			"classes":{
+				"class_1":{
+					"name": "Beginner's Swimming",
+					"description": "Lorem ipsum dolor set amet",
+					"min_students": "1",
+					"capacity": "7",
+					"meta":{
+						"create_date":"",
+						"update_date":"",
+						"delete_date":""
+					},
+					"start_date":"",
+					"end_date":"",
+					"lessons":{
+						"lesson_1":{
+							"name": "Swimming Strokes",
+							"description": "Lorem ipsum dolor set amet",
+							"start":{
+								"date":"",
+								"time":""
+							},
+							"end":{
+								"date":"",
+								"time":""
+							},
+							"venue":"",
+							"attendance":{
+								"student_1":{
+									"present":"",
+									"reason":""
+								},
+								"student_5":{
+									"present":"",
+									"reason":""
+								},
+								"student_6":{
+									"present":"",
+									"reason":""
+								},
+								"student_11":{
+									"present":"",
+									"reason":""
+								},
+								"student_12":{
+									"present":"",
+									"reason":""
+								}
+							}
+						}
+					},
+					"students":{
+						"0": "student_1",
+						"1": "student_5",
+						"2": "student_6",
+						"3": "student_11",
+						"4": "student_12",
+					}
+
+				}
+			}
+		},
+		"user_2":{
+
+		}
+	},
+	"students":{
+		"student_1":{
+			"first_name":"Mark",
+			"last_name":"Doe",
+			"date_of_birth":"",
+			"email":"mark@mail.com",
+			"mobile":"01855555555",
+			"image":"",
+			"parents":{
+				"parent_1":{
+					"first_name":"Cookie",
+					"last_name":"Doe",
+					"email": "cookie@mail.com",
+					"mobile": "01855555555"
+				}
+			}
+		},
+		"student_2":{
+			
+		}
+	},
+	"billing":{
+
+	},
+	"app_settings":{
+		"version":"1.0",
+		"os": "ios"
+	}
+
+}

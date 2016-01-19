@@ -13,7 +13,7 @@
 		<br/>
 		<input type='email' placeholder='Email' id="email" ng-model="email">
 		<br/>
-		<input type='password' placeholder='Password' id="password">
+		<input type='password' placeholder='Password' id="password" ng-model="password">
 		<br/>
 		<button ng-click="registerUser($event)">Submit</button>
 	</div>

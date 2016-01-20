@@ -2,70 +2,47 @@ var myApp = angular.module("myApp", ["firebase"]);
 var ref = new Firebase("https://radiant-heat-2965.firebaseio.com");
 var user_id = "";
 
-myApp.factory('classFactory', function($firebaseArray){
 
-		return {
-	        getClassList: function(user_obj){
-				var authData = ref.getAuth();
-				if (authData) {
-				  console.log("User " + authData.uid + " is logged in with " + authData.provider, authData);
-				  var user_id = authData.uid;
+myApp.factory('auth', function(){
+	var user;
 
-				    if(authData.password){
-					    user_obj.email = authData.password.email;
-					}
-					else if(authData.facebook){
-					    user_obj.email = authData.facebook.email;
-					}
-					
-					var classesRef = ref.child("users/"+user_id+"/classes");
-					return $firebaseArray(classesRef);
+	return{
+	    setUser : function(aUser){
+	        user = aUser;
+	    },
+	    isLoggedIn : function(){
+	    	var authData = ref.getAuth();
+			if (authData) {
+			    console.log("User " + authData.uid + " is logged in with " + authData.provider, authData);
+			    var user_id = authData.uid;
 
-				} else {
-				  console.log("User is logged out");
-				  // window.location = "http://localhost/firebaseFirst/login.php";
+			    if(authData.password){
+				    return authData.password.email;
+				}
+				else if(authData.facebook){
+				    return authData.facebook.email;
 				}
 
-	        },
-	        addUserClass: function(user_obj, class_obj){
-				var authData = ref.getAuth();
-				if (authData) {
-				  console.log("User " + authData.uid + " is logged in with " + authData.provider, authData);
-				  var user_id = authData.uid;
-
-				    if(authData.password){
-					    user_obj.email = authData.password.email;
-					}
-					else if(authData.facebook){
-					    user_obj.email = authData.facebook.email;
-					}
-		        	
-		        	var classRef = ref.child("users/"+user_id+"/classes");
-
-				    var new_class = {name: class_obj.name, description: class_obj.description};
-				    classRef.push(new_class);
-					
-				} else {
-				  console.log("User is logged out");
-				  // window.location = "http://localhost/firebaseFirst/login.php";
-				}
-	        }
-
-		};
+			} else {
+			  console.log("User is logged out");
+			  // window.location = "http://localhost/firebaseFirst/login.php";
+			}
+	    }
+	  }
 });
 
 myApp.factory('userFactory', function($firebaseArray) {
     
     return {
-        getUserList: function(){
+        getUsers: function(){
 			var usersRef = ref.child("users");
 			return $firebaseArray(usersRef);
         },
         registerUser: function(user_obj){
 
 			ref.createUser({
-			  email    : user_obj.email,
-			  password : user_obj.password
+			  email    : user_obj.userEmail,
+			  password : user_obj.userPassword
 			}, function(error, userData) {
 			  if (error) {
 			    console.log("Error creating user:", error);
@@ -74,16 +51,20 @@ myApp.factory('userFactory', function($firebaseArray) {
 			    var user_id = userData.uid;
 				var userRef = ref.child("users/"+user_id);
 
-			    var new_user = {name: user_obj.name, email: user_obj.email, provider: "password", classes: {}};
+			    var new_user = {
+			    	name: user_obj.userName, 
+				    email: user_obj.userEmail, 
+				    provider: "password", 
+				    classes: {}
+				};
 			    userRef.setWithPriority(new_user, 1);
-				// $scope.users.$add({ name: user_obj.name, email: user_obj.email, provider: "password" });
 
 			    // window.location = "http://localhost/firebaseFirst/login.php";
 			  }
 			});
         },
         loginUserNormal: function(user_obj){
-        	console.log("password",user_obj.password);
+        	
         	ref.authWithPassword({
 			  email    : user_obj.email,
 			  password : user_obj.password
@@ -102,8 +83,8 @@ myApp.factory('userFactory', function($firebaseArray) {
 				  console.log("The read failed: " + errorObject.code);
 				});
 
-			    localStorage.user_id = authData.uid;
-			    localStorage.user_email = user_obj.email;
+			    // localStorage.user_id = authData.uid;
+			    // localStorage.user_email = user_obj.userEmail;
 				window.location = "http://localhost/firebaseFirst/dashboard.php";
 
 			  }
@@ -119,7 +100,11 @@ myApp.factory('userFactory', function($firebaseArray) {
 					var user_id = authData.uid;
 					var userRef = ref.child("users/"+user_id);
 
-					var new_user = {name: authData.facebook.displayName, email: authData.facebook.email, provider: authData.provider};
+					var new_user = {
+						name: authData.facebook.displayName, 
+						email: authData.facebook.email, 
+						provider: authData.provider
+					};
 					userRef.setWithPriority(new_user, 1);
 
 					localStorage.user_id = user_id;
@@ -135,33 +120,169 @@ myApp.factory('userFactory', function($firebaseArray) {
     };
 });
 
-myApp.controller("MainController", function($scope, userFactory, classFactory){
-	$scope.users = userFactory.getUserList();
-	$scope.email = "";
-	$scope.name = "";
-	$scope.password = "";
+myApp.factory('studentFactory', function($firebaseArray) {
+    
+    return {
+        getStudents: function(user_obj){
+        	var authData = ref.getAuth();
+			if (authData) {
+			    console.log("User " + authData.uid + " is logged in with " + authData.provider, authData);
+			    var user_id = authData.uid;
 
-	$scope.classes = classFactory.getClassList({email: $scope.email});
-	$scope.className = "";
-	$scope.classDescription = "";
+			    if(authData.password){
+				    user_obj.userEmail = authData.password.email;
+				}
+				else if(authData.facebook){
+				    user_obj.userEmail = authData.facebook.email;
+				}
+
+				var studentsRef = ref.child("users/"+user_id+"/students");
+				return $firebaseArray(studentsRef);
+
+			} else {
+			  console.log("User is logged out");
+			  // window.location = "http://localhost/firebaseFirst/login.php";
+			}
+        },
+        addStudent: function(user_obj, student_obj){
+        	var authData = ref.getAuth();
+			if (authData) {
+			    console.log("User " + authData.uid + " is logged in with " + authData.provider, authData);
+			    var user_id = authData.uid;
+
+			    if(authData.password){
+				    user_obj.userEmail = authData.password.email;
+				}
+				else if(authData.facebook){
+				    user_obj.userEmail = authData.facebook.email;
+				}
+
+				var studentRef = ref.child("users/"+user_id+"/students");
+
+			    var new_student = {
+			    	name: student_obj.name, 
+				    email: student_obj.email
+				};
+
+			    studentRef.push(new_student);
+
+			} else {
+			  console.log("User is logged out");
+			  // window.location = "http://localhost/firebaseFirst/login.php";
+			}
+
+        }
+    };
+});
+
+myApp.factory('classFactory', function($firebaseArray){
+
+	return {
+        getClasses: function(user_obj){
+			var authData = ref.getAuth();
+			if (authData) {
+			    console.log("User " + authData.uid + " is logged in with " + authData.provider, authData);
+			    var user_id = authData.uid;
+
+			    if(authData.password){
+				    user_obj.userEmail = authData.password.email;
+				}
+				else if(authData.facebook){
+				    user_obj.userEmail = authData.facebook.email;
+				}
+				
+				var classesRef = ref.child("users/"+user_id+"/classes");
+				return $firebaseArray(classesRef);
+
+			} else {
+			  console.log("User is logged out");
+			  // window.location = "http://localhost/firebaseFirst/login.php";
+			}
+
+        },
+        addClass: function(user_obj, class_obj){
+			var authData = ref.getAuth();
+			if (authData) {
+			  console.log("User " + authData.uid + " is logged in with " + authData.provider, authData);
+			  var user_id = authData.uid;
+
+			    if(authData.password){
+				    user_obj.userEmail = authData.password.email;
+				}
+				else if(authData.facebook){
+				    user_obj.userEmail = authData.facebook.email;
+				}
+	        	
+	        	var classRef = ref.child("users/"+user_id+"/classes");
+
+			    var new_class = {
+			    	name: class_obj.name, 
+				    description: class_obj.description
+				};
+			    classRef.push(new_class);
+				
+			} else {
+			  console.log("User is logged out");
+			  // window.location = "http://localhost/firebaseFirst/login.php";
+			}
+        }
+	};
+});
+
+myApp.controller("MainController", function($scope, auth, userFactory, studentFactory, classFactory){
+	
+	$scope.users = userFactory.getUsers();
+	$scope.userEmail = auth.isLoggedIn();
+	$scope.userName = "";
+	$scope.userPassword = "";
 
 	$scope.registerUser = function(e){
-		userFactory.registerUser({name: $scope.name, email:$scope.email, password:$scope.password});
+		userFactory.registerUser({
+			name: $scope.userName, 
+			email:$scope.userEmail, 
+			password:$scope.userPassword
+		});
 	}
 
 	$scope.loginUserNormal = function(e){
-		userFactory.loginUserNormal({email:$scope.email, password:$scope.password});
+		userFactory.loginUserNormal({
+			email:$scope.userEmail, 
+			password:$scope.userPassword
+		});
 	}
 	
 	$scope.loginUserFacebook = function(e){
 		userFactory.loginUserFacebook();
 	}
 
-	$scope.addUserClass = function(e){
-		classFactory.addUserClass({email: $scope.email}, {name: $scope.className, description:$scope.classDescription});
-	}
-
 	$scope.logout = function(e){
 		ref.unauth();
+		  // window.location = "http://localhost/firebaseFirst/login.php";
+	}
+
+	$scope.students = studentFactory.getStudents({email: $scope.userEmail});
+	$scope.studentName = "";
+	$scope.studentEmail = "";
+
+	$scope.addStudent = function(e){
+		studentFactory.addStudent(
+			{email: $scope.userEmail}, 
+			{
+				name: $scope.studentName, 
+				email:$scope.studentEmail
+			});
+	}
+
+	$scope.classes = classFactory.getClasses({email: $scope.userEmail});
+	$scope.className = "";
+	$scope.classDescription = "";
+
+	$scope.addClass = function(e){
+		classFactory.addClass(
+			{email: $scope.userEmail}, 
+			{
+				name: $scope.className, 
+				description:$scope.classDescription
+			});
 	}
 });

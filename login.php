@@ -9,9 +9,9 @@
 </head>
 <body ng-app="myApp">
 	<div id="form" ng-controller="MainController">
-		<input type='email' placeholder='Email' id="email" ng-model="email">
+		<input type='email' placeholder='Email' id="email" ng-model="userEmail">
 		<br/>
-		<input type='password' placeholder='Password' id="password" ng-model="password">
+		<input type='password' placeholder='Password' id="password" ng-model="userPassword">
 		<br/>
 		<button id="normal" ng-click="loginUserNormal($event)">Login</button>
 		<button id="facebook" ng-click="loginUserFacebook($event)">Facebook Login</button>

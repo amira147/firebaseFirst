@@ -10,7 +10,7 @@
 <body ng-app="myApp">
 
 <div ng-controller="MainController">
-	<p>Logged in: <span class="user_email" ng-model="email"></span></p>
+	<p>Logged in: <span class="user_email" ng-model="userEmail"></span></p>
 	<button ng-click="logout($event)">Logout</button>
 
 	<ul id="example-messages" class="example-chat-messages">
@@ -25,7 +25,7 @@
 		<br/>
 		<input type='text' placeholder='Class Description' id="class_description" ng-model="classDescription">
 		<br/>
-		<button id="submit_class" ng-click="addUserClass($event)">Submit</button>
+		<button id="submit_class" ng-click="addClass($event)">Submit</button>
 	</div>
 
 </div>

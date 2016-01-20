@@ -9,13 +9,13 @@
 </head>
 <body ng-app="myApp">
 	<div id="form" ng-controller="MainController">
-		<input type='text' placeholder='Name' id="name" ng-model="name">
+		<input type='text' placeholder='Name' id="name" ng-model="userName">
 		<br/>
-		<input type='email' placeholder='Email' id="email" ng-model="email">
+		<input type='email' placeholder='Email' id="email" ng-model="userEmail">
 		<br/>
-		<input type='password' placeholder='Password' id="password" ng-model="password">
+		<input type='password' placeholder='Password' id="password" ng-model="userPassword">
 		<br/>
-		<button ng-click="registerUser($event)">Submit</button>
+		<button ng-click="addUser($event)">Submit</button>
 	</div>
 	<p>Registration Successful</p>
 </body>

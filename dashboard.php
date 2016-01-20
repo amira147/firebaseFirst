@@ -2,22 +2,41 @@
 <html>
 <head>
 	<title>Dashboard</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
 	<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+	<script src="https://cdn.firebase.com/libs/angularfire/1.1.3/angularfire.min.js"></script>
+	<script src="app.js"></script>
 </head>
-<body>
-<p>Logged in: <span class="user_email"></span></p>
-<button>Logout</button>
+<body ng-app="myApp">
 
-<!-- <button id="create_class">Create Class</button> -->
+<div ng-controller="MainController">
 
-<div class="form">
-	<input type='text' placeholder='Class Name' id="class_name">
-	<br/>
-	<input type='text' placeholder='Class Description' id="class_description">
-	<br/>
-	<button id="submit_class">Submit</button>
+	<p>Logged in: <span class="user_email" ng-model="userEmail">{{ userEmail }}</span></p>
+	<button ng-click="logout($event)">Logout</button>
+
+	<hr/>
+
+	<h1>Classes</h1>
+	<ul id="example-messages" class="example-chat-messages">
+	  <li ng-repeat="class in classes">
+	    <strong class="example-chat-username">{{ class.name }}</strong>
+	    <p>{{ class.description }}</p>
+	  </li>
+	</ul>
+
+	<hr/>
+
+	<h1>Students</h1>
+	<ul id="example-messages" class="example-chat-messages">
+	  <li ng-repeat="student in students">
+	    <strong class="example-chat-username">{{ student.name }}</strong>
+	    <p>{{ student.email }}</p>
+	  </li>
+	</ul>
+
+
 </div>
-
+<?php /* 
 <script src='https://code.jquery.com/jquery-2.2.0.min.js'></script>
 <script type="text/javascript">
 	$(document).ready(function(){
@@ -55,5 +74,6 @@
 		});
 	});
 </script>
+*/ ?>
 </body>
 </html>

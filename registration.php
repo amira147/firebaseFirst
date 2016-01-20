@@ -15,7 +15,7 @@
 		<br/>
 		<input type='password' placeholder='Password' id="password" ng-model="userPassword">
 		<br/>
-		<button ng-click="addUser($event)">Submit</button>
+		<button ng-click="registerUser($event)">Submit</button>
 	</div>
 	<p>Registration Successful</p>
 </body>

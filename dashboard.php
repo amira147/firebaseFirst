@@ -17,17 +17,24 @@
 	<hr/>
 
 	<h1>Classes</h1>
-	<ul id="example-messages" class="example-chat-messages">
+	<ul class="example-chat-messages">
 	  <li ng-repeat="class in classes">
 	    <strong class="example-chat-username">{{ class.name }}</strong>
 	    <p>{{ class.description }}</p>
+	    <h4>Lessons:</h4>
+	    <ul class="example-chat-messages">
+		  <li ng-repeat="lesson in class.lessons">
+		    <strong class="example-chat-username">{{ lesson.name }}</strong>
+		    <p>{{ lesson.description }}</p>
+		  </li>
+		</ul>
 	  </li>
 	</ul>
 
 	<hr/>
 
 	<h1>Students</h1>
-	<ul id="example-messages" class="example-chat-messages">
+	<ul class="example-chat-messages">
 	  <li ng-repeat="student in students">
 	    <strong class="example-chat-username">{{ student.name }}</strong>
 	    <p>{{ student.email }}</p>

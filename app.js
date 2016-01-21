@@ -1,8 +1,7 @@
 var myApp = angular.module("myApp", ["firebase"]);
 var ref = new Firebase("https://radiant-heat-2965.firebaseio.com");
 
-
-myApp.factory('firebaseFactory', function($firebaseArray){
+myApp.factory('firebaseFactory', function($firebaseArray, $firebaseObject){
 	var user_id;
 	var obj = {};
 
@@ -30,8 +29,9 @@ myApp.factory('firebaseFactory', function($firebaseArray){
 		}
     }
     obj.logout = function(){
+
     	ref.unauth();
-    	if(window.location.href != "/firebaseFirst/login.php" && window.location.href != "/firebaseFirst/registration.php"){
+    	if(window.location != "http://localhost/firebaseFirst/login.php" && window.location != "http://localhost/firebaseFirst/registration.php"){
 			window.location = "http://localhost/firebaseFirst/login.php";
     	}
     }
@@ -149,6 +149,18 @@ myApp.factory('firebaseFactory', function($firebaseArray){
 		}
 
     }
+    obj.getStudentsByClass = function(class_id){
+			
+		var studentsRef = ref.child("users/"+user_id+"/classes/"+class_id+"/students");
+		return $firebaseArray(studentsRef);
+
+    }
+    obj.getStudentDetails = function(student_id){
+			
+		var studentRef = ref.child("users/"+user_id+"/students/"+student_id);
+		return $firebaseObject(studentRef);
+
+    }
     
     //class functions
     obj.getClasses = function(user_obj){
@@ -174,27 +186,42 @@ myApp.factory('firebaseFactory', function($firebaseArray){
     }
     
     //lesson functions
-  //   obj.getLessons = function(class_obj){
-			
-		// var classesRef = ref.child("users/"+user_id+"/classes/"+class_obj.id+"/lessons");
-		// return $firebaseArray(classesRef);
-
-  //   }
-  //   obj.addLesson = function(user_obj, lesson_obj){
-		// if (obj.isLoggedIn()) {
+    obj.addLesson = function(class_id, lesson_obj){
+		if (obj.isLoggedIn()) {
         	
-  //       	var classRef = ref.child("users/"+user_id+"/classes");
+        	var lessonRef = ref.child("users/"+user_id+"/classes/"+class_id+"/lessons");
 
-		//     var new_class = {
-		//     	name: class_obj.name, 
-		// 	    description: class_obj.description
-		// 	};
-		//     classRef.push(new_class);
+		    var new_lesson = {
+		    	name: lesson_obj.name, 
+			    description: lesson_obj.description,
+				start:{
+					date:"02/02/2016",
+					time:"0900"
+				},
+				end:{
+					date:"02/02/2016",
+					time:"1030"
+				},
+				venue:"Swimming Academy",
+				attendance:""
+			};
+		    lessonRef.push(new_lesson);
 			
-		// } else {
-		//   console.log("User is logged out");
-		// }
-  //   }
+		} else {
+		  console.log("User is logged out");
+		}
+    }
+    obj.getLessonsByClassId = function(class_id){
+			
+		var classesRef = ref.child("users/"+user_id+"/classes/"+class_id+"/lessons");
+		return $firebaseArray(classesRef);
+
+    }
+    obj.getLessonDetails = function(class_id, lesson_id){
+		
+		var lessonRef = ref.child("users/"+user_id+"/classes/"+class_id+"/lessons/"+lesson_id);
+		return $firebaseObject(lessonRef);
+    }
 	
 	return obj;
 	  
@@ -203,6 +230,7 @@ myApp.factory('firebaseFactory', function($firebaseArray){
 
 myApp.controller("MainController", function($scope, firebaseFactory){
 	
+	//User
 	$scope.users = firebaseFactory.getUsers();
 	$scope.userEmail = firebaseFactory.isLoggedIn() || firebaseFactory.logout();
 	$scope.userName = "";
@@ -239,9 +267,13 @@ myApp.controller("MainController", function($scope, firebaseFactory){
 		firebaseFactory.logout();
 	}
 
+	//Students
 	$scope.students = firebaseFactory.getStudents();
+	$scope.studentId = "";
 	$scope.studentName = "";
 	$scope.studentEmail = "";
+	$scope.classStudents = "";
+	$scope.studentDetails = "";
 
 	$scope.addStudent = function(e){
 		firebaseFactory.addStudent(
@@ -252,10 +284,32 @@ myApp.controller("MainController", function($scope, firebaseFactory){
 				date_of_birth: "19/02/1996",
 				mobile: "01855555555",
 				image: "http://www.clker.com/cliparts/C/j/Q/q/M/o/male-profile-silhouette-md.png"
-			});
+		});
 	}
 
+	$scope.displayClassStudents = function(class_id){
+		$scope.classId = class_id;
+		var students_array = firebaseFactory.getStudentsByClass(class_id);
+		
+		students_array.$loaded().then(function () {
+			$scope.classStudents = students_array;
+		});
+
+	}
+
+	$scope.displayStudentDetails = function(student_id){
+		$scope.studentId = student_id;
+		var student_obj = firebaseFactory.getStudentDetails(student_id);
+		
+		student_obj.$loaded().then(function () {
+			$scope.studentDetails = student_obj;
+		});
+
+	}
+
+	//Classes
 	$scope.classes = firebaseFactory.getClasses();
+	$scope.classId = "";
 	$scope.className = "";
 	$scope.classDescription = "";
 
@@ -268,16 +322,33 @@ myApp.controller("MainController", function($scope, firebaseFactory){
 			});
 	}
 
-	// $scope.lessons = firebaseFactory.getLessons({class_id: });
-	// $scope.lessonName = "";
-	// $scope.lessonDescription = "";
+	//Lessons
+	$scope.lessons = "";
+	$scope.lessonName = "";
+	$scope.lessonDescription = "";
+	$scope.lessonDetails = "";
 
-	// $scope.addLesson = function(e){
-	// 	firebaseFactory.addLesson(
-	// 		{email: $scope.userEmail}, 
-	// 		{
-	// 			name: $scope.lessonName, 
-	// 			description:$scope.lessonDescription
-	// 		});
-	// }
+	$scope.addLesson = function(e){
+		firebaseFactory.addLesson(
+			$scope.classId,
+			{
+				name: $scope.lessonName, 
+				description:$scope.lessonDescription
+			});
+	}
+
+	$scope.displayLessons = function(class_id){
+		$scope.classId = class_id;
+		$scope.lessons = firebaseFactory.getLessonsByClassId(class_id);
+	}
+
+	$scope.displayLessonDetails = function(class_id, lesson_id){
+		var lesson_obj = firebaseFactory.getLessonDetails(class_id, lesson_id);
+		
+		lesson_obj.$loaded().then(function () {
+			$scope.lessonDetails = lesson_obj;
+		});
+
+	}
 });
+

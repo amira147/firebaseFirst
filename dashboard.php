@@ -19,11 +19,11 @@
 	<h1>Classes</h1>
 	<ul class="example-chat-messages">
 	  <li ng-repeat="class in classes">
-	    <strong class="example-chat-username">{{ class.name }}</strong>
-	    <p>{{ class.description }}</p>
+	    <strong class="example-chat-username" ng-click="displayLessons(class.$id)">{{ class.name }}</strong>
+	    <p ng-click="displayClassStudents(class.$id)">{{ class.description }}</p>
 	    <h4>Lessons:</h4>
 	    <ul class="example-chat-messages">
-		  <li ng-repeat="lesson in class.lessons">
+		  <li ng-repeat="lesson in lessons">
 		    <strong class="example-chat-username">{{ lesson.name }}</strong>
 		    <p>{{ lesson.description }}</p>
 		  </li>
@@ -36,9 +36,28 @@
 	<h1>Students</h1>
 	<ul class="example-chat-messages">
 	  <li ng-repeat="student in students">
-	    <strong class="example-chat-username">{{ student.name }}</strong>
+	    <strong class="example-chat-username">{{student.$id}} {{ student.name }}</strong>
 	    <p>{{ student.email }}</p>
 	  </li>
+	</ul>
+
+	<hr/>
+
+	<h1>Students for {{classId}} </h1>
+	<ul class="example-chat-messages">
+	  <li ng-repeat="student in classStudents">
+	    <strong class="example-chat-username" ng-click="displayStudentDetails(student.$id)">{{student.$id}}</strong>
+	    <!-- <p>{{ student.email }}</p> -->
+	  </li>
+	</ul>
+
+	<hr/>
+
+	<h1>Details for {{studentId}} </h1>
+	<ul class="example-chat-messages">
+	  <li> {{studentDetails.name}} </li>
+	  <li> {{studentDetails.email}} </li>
+	  <li> {{studentDetails.date_of_birth}} </li>
 	</ul>
 
 

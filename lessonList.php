@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Lesson List</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.1/moment.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
 	<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
 	<script src="https://cdn.firebase.com/libs/angularfire/1.1.3/angularfire.min.js"></script>
@@ -20,11 +21,11 @@
 	  </li>
 	</ul>
 
-	<h4>Lessons for {{classId}}</h4>
+	<h4 ng-click="getLessonsByDate(1455235200)">Lessons for {{classId}}</h4>
 	<ul id="example-messages" class="example-chat-messages">
 	  <li ng-repeat="lesson in lessons">
 	    <strong class="example-chat-username" ng-click="displayLessonDetails(classId, lesson.$id)">{{ lesson.name }}</strong>
-	    <p>{{ lesson.description }}</p>
+	    <p ng-click="">{{ lesson.description }}</p>
 	  </li>
 	</ul>
 
@@ -32,17 +33,18 @@
 		<li><h4>Lesson Details for {{lessonDetails.name}}</h4></li>
 		<li>Description : {{lessonDetails.description}}</li>
 		<li>Venue : {{lessonDetails.venue}}</li>
-		<li>Start : {{lessonDetails.start.date}}, {{lessonDetails.start.time}}</li>
-		<li>End : {{lessonDetails.end.date}}, {{lessonDetails.end.time}}</li>
+		<li>Start : {{lessonDetails.duration.start}}</li>
+		<li>End : {{lessonDetails.duration.end}}</li>
 		<li>Attendance : {{lessonDetails.attendance}}</li>
 	</ul>
 
 	<div class="form">
-		<input type='text' placeholder='Lesson Name' ng-model="lessonName">
+		<input type='text' placeholder='Lesson Name' ng-model="lessonDetails.name">
 		<br/>
-		<input type='text' placeholder='Lesson Description' ng-model="lessonDescription">
+		<input type='text' placeholder='Lesson Description' ng-model="lessonDetails.description">
 		<br/>
-		<button id="submit_class" ng-click="addLesson(classId)">Submit</button>
+		<button id="submit_class" ng-click="addLesson()">Submit</button>
+		<!-- <button id="submit_class" ng-click="editLesson(classId, lessonDetails.$id)">Submit</button> -->
 	</div>
 
 </div>

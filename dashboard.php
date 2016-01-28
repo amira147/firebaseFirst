@@ -11,9 +11,14 @@
 
 <div ng-controller="MainController">
 
-	<p>Logged in: <span class="user_email" ng-model="userEmail">{{ userEmail }}</span></p>
+	<p>Logged in: <span class="user_email" ng-model="userEmail" ng-click="displayUserDetails()">{{ userEmail }}</span></p>
 	<button ng-click="logout($event)">Logout</button>
 
+	<ul>
+		<li> Full name: {{userDetails.name}} </li>
+		<li> Mobile: {{userDetails.mobile}} </li>
+		<li> Date of birth: {{userDetails.date_of_birth}} </li>
+	</ul>
 	<hr/>
 
 	<h1>Classes</h1>
@@ -37,7 +42,7 @@
 	<ul class="example-chat-messages">
 	  <li ng-repeat="student in students">
 	    <strong class="example-chat-username">{{student.$id}} {{ student.name }}</strong>
-	    <p>{{ student.email }}</p>
+	    <p ng-click="deleteStudent(student.$id)">{{ student.email }}</p>
 	  </li>
 	</ul>
 
@@ -62,44 +67,5 @@
 
 
 </div>
-<?php /* 
-<script src='https://code.jquery.com/jquery-2.2.0.min.js'></script>
-<script type="text/javascript">
-	$(document).ready(function(){
-		// $('#create_class').click(function(){
-		// 	$('#form').hide();
-		// });
-		var ref = new Firebase("https://radiant-heat-2965.firebaseio.com");
-		var authData = ref.getAuth();
-		if (authData) {
-		  console.log("User " + authData.uid + " is logged in with " + authData.provider, authData);
-		    if(authData.password){
-			    $('.user_email').html(authData.password.email);
-			}
-			else if(authData.facebook){
-			    $('.user_email').html(authData.facebook.email);
-			}
-		} else {
-		  console.log("User is logged out");
-		}
-
-		$('#submit_class').click(function(){
-			var ref = new Firebase("https://radiant-heat-2965.firebaseio.com");
-
-			    var user_id = localStorage.user_id;
-				var classRef = ref.child("users/"+user_id+"/classes");
-
-			    var new_class = {name: $('#class_name').val(), description: $('#class_description').val()};
-			    classRef.push(new_class);
-			    // $('#form').hide();
-		});
-
-		$('button').click(function(){
-			ref.unauth();
-			window.location = "http://localhost/firebaseFirst/login.php";
-		});
-	});
-</script>
-*/ ?>
 </body>
 </html>

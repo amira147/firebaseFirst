@@ -15,17 +15,17 @@
 
 	<ul id="example-messages" class="example-chat-messages">
 	  <li ng-repeat="class in classes">
-	    <strong class="example-chat-username">{{ class.name }}</strong>
+	    <strong class="example-chat-username" ng-click="displayClassDetails(class.$id)">{{ class.name }}</strong>
 	    <p>{{ class.description }}</p>
 	  </li>
 	</ul>
 
 	<div class="form">
-		<input type='text' placeholder='Class Name' id="class_name" ng-model="className">
+		<input type='text' placeholder='Class Name' id="class_name" ng-model="classDetails.name">
 		<br/>
-		<input type='text' placeholder='Class Description' id="class_description" ng-model="classDescription">
+		<input type='text' placeholder='Class Description' id="class_description" ng-model="classDetails.description">
 		<br/>
-		<button id="submit_class" ng-click="addClass($event)">Submit</button>
+		<button id="submit_class" ng-click="editClass(classDetails.$id)"">Submit</button>
 	</div>
 
 </div>

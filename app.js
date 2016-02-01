@@ -330,7 +330,7 @@ myApp.factory('firebaseFactory', function($firebaseArray, $firebaseObject, $q){
     //lesson functions
     obj.addLesson = function(class_id, lesson_obj){
         	
-        	var lessonRef = ref.child("users/"+user_id+"/classes/"+class_id+"/lessons");
+        	var lessonRef = ref.child("users/"+user_id+"/lessons");
 
 		    var new_lesson = {
 		    	name: lesson_obj.name, 
@@ -341,24 +341,21 @@ myApp.factory('firebaseFactory', function($firebaseArray, $firebaseObject, $q){
 			    },
 				venue:"Swimming Academy",
 				attendance:"",
+				class_id: class_id,
 			    status_id: "2"
 			};
 		    lessonRef.push(new_lesson);
     }
-    obj.editLesson = function(class_id, lesson_id, lesson_obj){
-        	
-    	var lessonRef = ref.child("users/"+user_id+"/classes/"+class_id+"/lessons/"+lesson_id);
+    obj.editLesson = function(lesson_id, lesson_obj){
+        	console.log("editLesson ", lesson_obj);
+    	var lessonRef = ref.child("users/"+user_id+"/lessons/"+lesson_id);
 
 	    var edited_lesson = {
 	    	name: lesson_obj.name, 
 		    description: lesson_obj.description,
-			start:{
-				date: lesson_obj.start_date,
-				time: lesson_obj.start_time
-			},
-			end:{
-				date: lesson_obj.end_date,
-				time: lesson_obj.end_time
+			duration:{
+				start: lesson_obj.duration.start,
+				end: lesson_obj.duration.end
 			},
 			venue: lesson_obj.venue,
 		    status_id: "2"
@@ -366,73 +363,69 @@ myApp.factory('firebaseFactory', function($firebaseArray, $firebaseObject, $q){
 	    lessonRef.update(edited_lesson);
 	}
     obj.getLessonsByClassId = function(class_id){
-			
-		var lessonsRef = ref.child("users/"+user_id+"/classes/"+class_id+"/lessons");
-		lessonsRef = lessonsRef.orderByChild('status_id').equalTo("2");
-		return $firebaseArray(lessonsRef);
+    	var deferred = $q.defer();
+
+		var lessons_array = [];
+		var lessonsRef = ref.child("users/"+user_id+"/lessons");
+
+		lessonsRef
+		  .orderByChild('class_id')
+		  .startAt(class_id).endAt(class_id)
+		  .once('value', function(lessons) {
+			    lessons.forEach(function(lesson){
+			    	var lesson_id = lesson.key();
+				   	var lesson = lesson.val();
+					if (lesson.status_id == "2") {
+						lesson.$id = lesson_id;
+						lessons_array.push(lesson);
+					}
+			    });
+				deferred.resolve(lessons_array);
+		  });
+
+		return deferred.promise;
 	}
-    obj.getLessonDetails = function(class_id, lesson_id){
+    obj.getLessonDetails = function(lesson_id){
 		
-		var lessonRef = ref.child("users/"+user_id+"/classes/"+class_id+"/lessons/"+lesson_id);
+		var lessonRef = ref.child("users/"+user_id+"/lessons/"+lesson_id);
+		
 		return $firebaseObject(lessonRef);
     }
     obj.getLessonsByDate = function(timestamp){
     	var deferred = $q.defer();
 
     	var lessons_array = [];
-    	var classesRef = ref.child("users/"+user_id+"/classes");
+    	var lessonsRef = ref.child("users/"+user_id+"/lessons");
 
-		classesRef.once("value", function(classes) {
+  		lessonsRef.once("value", function(lessons) {
 
-			classes.forEach(function(one_class) {
-			  	var class_id = one_class.key();
-			  	var class_start = one_class.val().duration.start;
-			  	var class_end = one_class.val().duration.end;
+			lessons.forEach(function(lesson) {
+			  	var lesson_id = lesson.key();
+			  	var lesson_start_timestamp = lesson.val().duration.start;
+			  	var lesson_start_date = moment(new Date(lesson_start_timestamp*1000)).format('MM/DD/YY');
+			  	var lesson_end_timestamp = lesson.val().duration.end;
 
-			  	if(class_start <= timestamp && class_end >= timestamp){
-			  		var lessonsRef = ref.child("users/"+user_id+"/classes/"+class_id+"/lessons");
+			  	var query_date = moment(new Date(timestamp*1000)).format('MM/DD/YY');
 
-			  		lessonsRef.once("value", function(lessons) {
-
-						lessons.forEach(function(lesson) {
-							// console.log("lessons foreach");
-						  	var lesson_id = lesson.key();
-						  	var lesson_start_timestamp = lesson.val().duration.start;
-						  	var lesson_start_date = moment(new Date(lesson_start_timestamp*1000)).format('MM/DD/YY');
-						  	var lesson_end_timestamp = lesson.val().duration.end;
-
-						  	var query_date = moment(new Date(timestamp*1000)).format('MM/DD/YY');
-						  	
-						  	// var dateLessonsRef = lessonsRef.orderByChild('duration.start').equalTo("2");
-
-						  	if(lesson_start_date == query_date){
-						  		console.log(query_date, " lesson=> ", lesson.val().name);
-						  		lessons_array.push(lesson.val());
-						  	}
-						});
-
-					});
+			  	if(lesson_start_date == query_date){
+			  		console.log(query_date, " lesson=> ", lesson.val().name);
+			  		lessons_array.push(lesson.val());
 			  	}
 			});
-			if(lessons_array.length > 0){
-				deferred.resolve(lessons_array);
-			}
-			else{
-				deferred.reject(error);
-			}
+			deferred.resolve(lessons_array);
+
 		});
-		// return $firebaseObject(lessonRef);
 
 		return deferred.promise;
     }
-	obj.deleteLesson = function(class_id, lesson_id){
-		var lessonRef = ref.child("users/"+user_id+"/classes/"+class_id+"/lessons/"+lesson_id);
+	obj.deleteLesson = function(lesson_id){
+		var lessonRef = ref.child("users/"+user_id+"/lessons/"+lesson_id);
 
 		lessonRef.update({status_id: "4"});
 	}
 	obj.hardDeleteLesson = function(lesson_id){
 
-		var lessonRef = ref.child("users/"+user_id+"/classes/"+class_id+"/lessons/"+lesson_id);
+		var lessonRef = ref.child("users/"+user_id+"/lessons/"+lesson_id);
 
 		lessonRef.remove();
 	}
@@ -636,26 +629,26 @@ myApp.controller("MainController", function($scope, firebaseFactory){
 
 	$scope.addLesson = function(e){
 		firebaseFactory.addLesson(
-			$scope.classId,
-			{
-				name: $scope.lessonDetails.name, 
-				description:$scope.lessonDetails.description
-			});
+		$scope.classId,
+		{
+			name: $scope.lessonDetails.name, 
+			description:$scope.lessonDetails.description
+		});
+		
+		firebaseFactory.getLessonsByClassId($scope.classId).then(function(data){
+			$scope.lessons = data;
+		});
 	}
 	
-	$scope.editLesson = function(class_id, lesson_id){
+	$scope.editLesson = function(lesson_id){
 		
-		firebaseFactory.editLesson(class_id, lesson_id,
+		firebaseFactory.editLesson(lesson_id,
 			{
 				name: $scope.lessonDetails.name, 
 			    description: $scope.lessonDetails.description,
-				start:{
-					date: $scope.lessonDetails.start_date,
-					time: $scope.lessonDetails.start_time
-				},
-				end:{
-					date: $scope.lessonDetails.end_date,
-					time: $scope.lessonDetails.end_time
+				duration:{
+					start: $scope.lessonDetails.duration.start,
+					end: $scope.lessonDetails.duration.end
 				},
 				venue: $scope.lessonDetails.venue,
 			    status_id: "2"
@@ -664,12 +657,13 @@ myApp.controller("MainController", function($scope, firebaseFactory){
 
 	$scope.displayLessons = function(class_id){
 		$scope.classId = class_id;
-		$scope.lessons = firebaseFactory.getLessonsByClassId(class_id);
-		console.log("displayLessons ", $scope.lessons);
+		firebaseFactory.getLessonsByClassId(class_id).then(function(data){
+			$scope.lessons = data;
+		});
 	}
 
-	$scope.displayLessonDetails = function(class_id, lesson_id){
-		var lesson_obj = firebaseFactory.getLessonDetails(class_id, lesson_id);
+	$scope.displayLessonDetails = function(lesson_id){
+		var lesson_obj = firebaseFactory.getLessonDetails(lesson_id);
 		
 		lesson_obj.$loaded().then(function () {
 			$scope.lessonDetails = lesson_obj;
@@ -679,15 +673,13 @@ myApp.controller("MainController", function($scope, firebaseFactory){
 		firebaseFactory.getLessonsByDate(timestamp).then(function(data){
 			$scope.lessons = data;
 		});
-
-		// lessons_array.$loaded().then(function () {
-		// 	$scope.lessons = lessons_array;
-		// 	console.log("getLessonsByDate ", lessons_array);
-		// });
 	}
 
-	$scope.deleteLesson = function(class_id, lesson_id){
-		firebaseFactory.deleteLesson(class_id, lesson_id);
+	$scope.deleteLesson = function(lesson_id){
+		firebaseFactory.deleteLesson(lesson_id);
+		firebaseFactory.getLessonsByClassId($scope.classId).then(function(data){
+			$scope.lessons = data;
+		});
 	}
 
 	$scope.hardDeleteLesson = function(class_id, lesson_id){

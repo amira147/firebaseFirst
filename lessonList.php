@@ -24,8 +24,8 @@
 	<h4 ng-click="getLessonsByDate(1455235200)">Lessons for {{classId}}</h4>
 	<ul id="example-messages" class="example-chat-messages">
 	  <li ng-repeat="lesson in lessons">
-	    <strong class="example-chat-username" ng-click="displayLessonDetails(classId, lesson.$id)">{{ lesson.name }}</strong>
-	    <p ng-click="">{{ lesson.description }}</p>
+	    <strong class="example-chat-username" ng-click="displayLessonDetails(lesson.$id)">{{ lesson.name }}</strong>
+	    <p ng-click="deleteLesson(lesson.$id)">{{ lesson.description }}</p>
 	  </li>
 	</ul>
 
@@ -44,7 +44,7 @@
 		<input type='text' placeholder='Lesson Description' ng-model="lessonDetails.description">
 		<br/>
 		<button id="submit_class" ng-click="addLesson()">Submit</button>
-		<!-- <button id="submit_class" ng-click="editLesson(classId, lessonDetails.$id)">Submit</button> -->
+		<!-- <button id="submit_class" ng-click="editLesson(lessonDetails.$id)">Submit</button> -->
 	</div>
 
 </div>

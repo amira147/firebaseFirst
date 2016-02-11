@@ -2,6 +2,8 @@
 <html>
 <head>
 	<title>Dashboard</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.1/moment.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
 	<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
 	<script src="https://cdn.firebase.com/libs/angularfire/1.1.3/angularfire.min.js"></script>
@@ -38,9 +40,10 @@
 
 	<hr/>
 
-	<h1>Students</h1>
+	<h1>My Students</h1>
 	<ul class="example-chat-messages">
 	  <li ng-repeat="student in students">
+	  	<img src="{{student.image}}" width="60" height="60" />
 	    <strong class="example-chat-username">{{student.$id}} {{ student.name }}</strong>
 	    <p ng-click="deleteStudent(student.$id)">{{ student.email }}</p>
 	  </li>
@@ -51,7 +54,7 @@
 	<h1>Students for {{classId}} </h1>
 	<ul class="example-chat-messages">
 	  <li ng-repeat="student in classStudents">
-	    <strong class="example-chat-username" ng-click="displayStudentDetails(student.$id)">{{student.$id}}</strong>
+	    <strong class="example-chat-username" ng-click="displayStudentDetails(student.$id)">{{student.name}}</strong>
 	    <!-- <p>{{ student.email }}</p> -->
 	  </li>
 	</ul>

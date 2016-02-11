@@ -1,0 +1,59 @@
+{
+    "rules": {
+        ".read": true,
+        ".write": true
+    }
+}
+
+{
+    "rules": {
+        "users": {
+	        "$user": {
+    				".read": "auth != null && auth.uid == $user",
+    				"classes":{
+    					// can create class only if ADMIN
+    					"$class":{
+    						".write":"newData.parent().parent().child('role_value').val() === 10"
+    					}
+    				}
+	        }
+        }
+    }
+}
+
+{
+    "rules": {
+        "users": {
+        "$uid": {
+          ".read": "auth != null && auth.uid == $uid"
+        }
+      },
+      ".write": true
+    }
+}
+
+
+    obj.deleteStudent = function(student_id){
+    	var studentRef = ref.child("users/"+user_id+"/students/"+student_id);
+
+		studentRef.update({status_id: "4"}, function(){
+			
+		});
+    }
+    obj.hardDeleteStudent = function(student_id){
+    	var studentRef = ref.child("users/"+user_id+"/students/"+student_id);
+
+		studentRef.remove(function(){
+			classRef = ref.child("users/"+user_id+"/classes");
+			calssRef.hasChild(student_id)
+		});
+    }
+
+sign up
+login
+logout
+create class
+create lesson
+refer
+
+function(timestamp, activity_name)

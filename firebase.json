@@ -1,0 +1,103 @@
+{
+	"def_status":{},
+	"def_user_type":{
+		"10": "trainer",
+		"20": "student",
+		"30": "parent"
+	},
+	"users":{
+		"user_1": {
+			"name": "",
+			"email": "",
+			"user_type":{
+				"0": "10",
+				"1": "20"
+			},
+			"students":{
+				"student_a":{
+					"name": "Jane"
+				},
+				"student_b":{
+					"name": "Sam"
+				}
+			}
+		},
+		"user_2":{
+			"students":{
+				"student_aa":{
+					"name": "Mark"
+				},
+				"student_bb":{
+					"name": "Jane"
+				}
+			}
+		},
+		"user_3":{
+			"name": "Jane",
+			"lessons":{
+				"lesson_1": "true",
+				"lesson_3": "true"
+			}
+		},
+		"user_4":{
+		},
+		"user_5":{},
+		"user_6":{}
+},
+	"classes":{
+		"class_1":{
+			"name": "",
+            "description": "",
+            "listing_public": "true",
+            "payment": {
+                "chargeable": "false",
+                "charge_method": "none", // by term or by lesson
+                "fee": "0",
+                "billing": "prepaid" // or postpaid
+            },
+            "attendance_required": "false",
+            "enrollment_required": "false",
+            "min_students": "5",
+            "max_students": "40",
+            "duration": {
+                "start": "",
+                "end": "",
+                "lesson_count": "0",
+            },
+            "location":{},
+            "user_id": "user_1",
+            "students": {
+
+            }
+
+		}
+	},
+	"lessons":{
+		"lesson_1":{
+			"name": "",
+			"class_id": "class_1",
+			"attendance":{
+				"user_2":{
+					"present": "",
+					"reason": ""
+				},
+				"user_3":{
+					"present": "",
+					"reason": ""
+				},
+				"user_4":{
+					"present": "",
+					"reason": ""
+				},
+				"user_5":{
+					"present": "",
+					"reason": ""
+				},
+				"user_6":{
+					"present": "",
+					"reason": ""
+				}
+			}
+		}
+	}
+}

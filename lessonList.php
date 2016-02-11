@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Lesson List</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.1/moment.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
 	<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
@@ -25,7 +26,7 @@
 	<ul id="example-messages" class="example-chat-messages">
 	  <li ng-repeat="lesson in lessons">
 	    <strong class="example-chat-username" ng-click="displayLessonDetails(lesson.$id)">{{ lesson.name }}</strong>
-	    <p ng-click="deleteLesson(lesson.$id)">{{ lesson.description }}</p>
+	    <p ng-click="getLessonsByDate(1455289200)">{{ lesson.description }}</p>
 	  </li>
 	</ul>
 
